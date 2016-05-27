@@ -20,6 +20,7 @@ find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(DEPTHSENSE)
 find_package(OpenNI2)
+find_package(urdfdom)
 
 # find packages with pkg-config
 find_package(PkgConfig)
@@ -228,6 +229,13 @@ if(CUDA_FOUND)
     cuda_add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${gpu_specific_src})
 else()
     add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${cpu_specific_src})
+endif()
+
+# use URDF support if installed
+if(urdfdom_FOUND)
+    include_directories(${urdfdom_INCLUDE_DIRS})
+    add_definitions(-DWITH_URDF)
+    target_link_libraries(${PROJECT_NAME} ${urdfdom_LIBRARIES})
 endif()
 
 # testing

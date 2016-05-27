@@ -8,6 +8,9 @@
 #define TIXML_USE_STL
 #include <tinyxml.h>
 
+#include <urdf_parser/urdf_parser.h>
+//#include <urdf_model/model.h>
+
 namespace dart {
 
 const static int currentFileVersion = 1;
@@ -104,6 +107,30 @@ void readFrameXML(const int parent, HostOnlyModel & model, TiXmlElement * elemen
 
 }
 
+// read from XML or URDF depending on file extension
+bool readModelFile(const char * filename, HostOnlyModel & model) {
+    // get file extension
+    const std::string fn(filename);
+    const std::string file_ext = fn.substr(fn.find_last_of('.')+1);
+
+    std::cout<<"reading "<<file_ext<<" model file"<<std::endl;
+
+    if(file_ext=="xml") {
+        return readModelXML(filename, model);
+    }
+#ifdef WITH_URDF
+    else if(file_ext=="urdf") {
+        return readModelURDF(filename, model);
+
+    }
+#endif
+    else {
+        std::cerr<<"unrecognized file extension: "<<file_ext<<std::endl;
+        std::cerr<<"supported file formats: xml, urdf (case sensitive)"<<std::endl;
+        return false;
+    }
+}
+
 bool readModelXML(const char * filename, HostOnlyModel & model) {
 
     struct stat buffer;
@@ -145,6 +172,15 @@ bool readModelXML(const char * filename, HostOnlyModel & model) {
 
     return true;
 }
+
+#ifdef WITH_URDF
+bool readModelURDF(const char * filename, HostOnlyModel & model) {
+    boost::shared_ptr<urdf::ModelInterface> urdf_model;
+    urdf_model = urdf::parseURDFFile(filename);
+
+    std::cout<<"found URDF robot: "<<urdf_model->getName()<<std::endl;
+}
+#endif
 
 void writeGeomXML(const HostOnlyModel & model, const int geom, TiXmlElement * parent) {
     TiXmlElement * geomEl = new TiXmlElement("geom");

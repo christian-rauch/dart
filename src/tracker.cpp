@@ -67,7 +67,7 @@ bool Tracker::addModel(const std::string & filename,
                        const bool cacheSdfs) {
 
     HostOnlyModel model;
-    if (!readModelXML(filename.c_str(),model)) {
+    if (!readModelFile(filename.c_str(),model)) {
         return false;
     }
 
@@ -296,7 +296,7 @@ void Tracker::updateModel(const int modelNum,
     delete _mirroredModels[modelNum];
 
     HostOnlyModel model;
-    readModelXML(_filenames[modelNum].c_str(),model);
+    readModelFile(_filenames[modelNum].c_str(),model);
 
     for (std::map<std::string,float>::const_iterator it = _sizeParams[modelNum].begin();
          it != _sizeParams[modelNum].end(); ++it) {

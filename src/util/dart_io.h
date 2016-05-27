@@ -8,7 +8,12 @@
 namespace dart {
 
 void writeModelXML(const HostOnlyModel & model, const char * filename);
+bool readModelFile(const char * filename, HostOnlyModel & model);
 bool readModelXML(const char * filename, HostOnlyModel & model);
+
+#ifdef WITH_URDF
+bool readModelURDF(const char * filename, HostOnlyModel & model);
+#endif
 
 // TODO: maybe make this look nicer?
 void saveState(const float * pose, const int dimensions, const int frame, std::string filename);
