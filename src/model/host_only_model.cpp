@@ -258,7 +258,7 @@ void HostOnlyModel::voxelize(float resolution, float padding, std::string cacheF
             continue;
         }
 
-        const std::string filename = cacheFile+"."+getFrameName(n)+"."+std::to_string(resolution)+".sdf";
+        const std::string filename = cacheFile+"."+getFrameName(i)+"."+std::to_string(resolution)+".sdf";
         struct stat buffer;
 
         _sdfColors.push_back(getGeometryColor(getFrameGeoms(i)[getFrameNumGeoms(i)-1]));
