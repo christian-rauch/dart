@@ -638,7 +638,6 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
         cudaStreamSynchronize(_depthPredictStream);
         cudaStreamSynchronize(_posInfoStream);
 
-        _lastElements->syncDeviceToHost(); // needed in compute obs to mod contribution
 //        for (int m=0; m<nModels; ++m) {
 //            std::cout << _lastElements->hostPtr()[m] << " points associated to model " << m << std::endl;
 //        }
@@ -664,6 +663,7 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
             float intersectionError = 0;
 
             if (opts.lambdaObsToMod > 0) {
+                _lastElements->syncDeviceToHost(); // needed in compute obs to mod contribution
                 computeObsToModContribution(eJ,JTJ,_iterationSummaries[m][iteration].errObsToMod,model,pose,opts,observation);
                 _iterationSummaries[m][iteration].nAssociatedPoints = _lastElements->hostPtr()[m];
             }
