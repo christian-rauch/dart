@@ -1,7 +1,7 @@
 #ifndef PREFIX_H
 #define PREFIX_H
 
-#include <host_defines.h>
+#include <cuda_runtime.h>
 
 #ifdef CUDA_BUILD
 #define PREFIX __device__ __host__
