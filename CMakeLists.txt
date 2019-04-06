@@ -1,5 +1,5 @@
-project("dart")
 cmake_minimum_required(VERSION 2.8)
+project(dart)
 
 # build release if not explicitly told to build debug
 if(NOT CMAKE_BUILD_TYPE)
@@ -8,6 +8,8 @@ endif()
 
 # turn on c++11
 add_definitions(-std=c++11)
+
+include(GNUInstallDirs)
 
 # set CMakeModule path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules/")
@@ -213,8 +215,6 @@ if(assimp_FOUND)
     add_definitions(-DASSIMP_BUILD)
 endif()
 
-include_directories(${PROJECT_SOURCE_DIR}/src/)
-
 if(NOT CUDA_FOUND)
     # set up library output
     set(BUILD_SHARED_LIBS ON)
@@ -223,12 +223,24 @@ endif()
 
 # add library
 if(CUDA_FOUND)
-    include_directories(${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc)
     add_definitions(-DCUDA_BUILD)
     cuda_add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${gpu_specific_src})
+    target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CUDA_TOOLKIT_ROOT_DIR}/include
+        ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc)
 else()
     add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${cpu_specific_src})
 endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>"
+    "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>/dart")
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_LIBDIR}
+)
 
 # testing
 find_package(GTest)
@@ -270,8 +282,16 @@ if(${BUILD_TESTS} AND ${GTEST_FOUND})
 endif()
 
 # installation of library and header files
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib)
-install(DIRECTORY src/ DESTINATION include/dart FILES_MATCHING PATTERN "*.h")
+install(TARGETS ${PROJECT_NAME} EXPORT dart
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+install(DIRECTORY src/ DESTINATION include/${PROJECT_NAME} FILES_MATCHING PATTERN "*.h")
+
+install(EXPORT dart
+    DESTINATION share/${PROJECT_NAME}/cmake
+    FILE ${PROJECT_NAME}Config.cmake
+)
 
 # setup pkg-config files
 SET(PKG_CONFIG_REQUIRES "tinyxml libpng libmatheval eigen3 cuda-8.0")
