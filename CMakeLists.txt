@@ -224,12 +224,12 @@ endif()
 # add library
 if(CUDA_FOUND)
     add_definitions(-DCUDA_BUILD)
-    cuda_add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${gpu_specific_src})
+    cuda_add_library(${PROJECT_NAME} SHARED ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${gpu_specific_src})
     target_include_directories(${PROJECT_NAME} PUBLIC
         ${CUDA_TOOLKIT_ROOT_DIR}/include
         ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc)
 else()
-    add_library(${PROJECT_NAME} ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${cpu_specific_src})
+    add_library(${PROJECT_NAME} SHARED ${dart_src} ${point_cloud_srcs} ${depth_source_src} ${cpu_specific_src})
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
