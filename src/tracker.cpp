@@ -30,7 +30,6 @@ Tracker::Tracker() : _depthSource(0), _pcSource(0), _optimizer(0),
     Model::initializeRenderer();
 #endif // ASSIMP_BUILD
 
-    cudaGLSetGLDevice(0);
     cudaDeviceReset();
 
 }
