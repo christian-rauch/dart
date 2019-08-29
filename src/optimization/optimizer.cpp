@@ -537,7 +537,8 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
                               std::vector<MirroredVector<int> *> & intersectionPotentialMatrices,
                               std::vector<Eigen::MatrixXf *> & dampingMatrices,
                               std::vector<Prior *> & priors,
-                              const bool do_pose_update) {
+                              const bool pose_full_update,
+                              const bool pose_6d_update) {
 
     // resize scratch space if there are more models than we've seen before
     const int nModels = models.size();
@@ -727,8 +728,13 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
             priors[p]->computeContribution(sparseJTJ,fullJTe,modelOffsets,priorOffsets[p],models,poses,opts);
         }
 
-        if(do_pose_update) {
+        if(pose_full_update) {
             Eigen::VectorXf paramUpdate = -sparseJTJ.triangularView<Eigen::Upper>().solve(fullJTe);
+
+            if(!pose_6d_update) {
+                // inhibit updates to 6D pose
+                paramUpdate.head<6>().setZero();
+            }
 
             for (int m=0; m<nModels; ++m) {
                 MirroredModel & model = *models[m];

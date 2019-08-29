@@ -56,7 +56,8 @@ public:
                        std::vector<MirroredVector<int> *> & intersectionPotentialMatrices,
                        std::vector<Eigen::MatrixXf *> & dampingMatrices,
                        std::vector<Prior *> & priors,
-                       const bool do_pose_update);
+                       const bool pose_full_update = true,
+                       const bool pose_6d_update = true);
 
     const float4 * getDevicePredictedPoints() const { return _predictionRenderer->getDevicePrediction(); }
 

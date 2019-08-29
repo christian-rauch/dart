@@ -440,7 +440,7 @@ void Tracker::optimizePose(const int modelNum) {
 
 }
 
-void Tracker::optimizePoses(const bool do_pose_update) {
+void Tracker::optimizePoses(const bool pose_full_update, const bool pose_6d_update) {
 
     if (!initialized()) {
         std::cerr << "the tracker is not initialized properly for tracking. make sure a depth source and a model have been added" << std::endl;
@@ -467,7 +467,8 @@ void Tracker::optimizePoses(const bool do_pose_update) {
                               _intersectionPotentialMatrices,
                               _dampingMatrices,
                               _priors,
-                              do_pose_update);
+                              pose_full_update,
+                              pose_6d_update);
 
 }
 
