@@ -179,14 +179,14 @@ void MirroredModel::setArticulation(const float * pose) {
     _T_fm->syncHostToDevice();
 }
 
-void MirroredModel::setPose(const Pose & pose) {
+void MirroredModel::setPose(const Pose & pose, const bool apply_limits) {
 
     _T_cm = pose.getTransformModelToCamera();
     _T_mc = pose.getTransformCameraToModel();
 
     for (int f=1; f<getNumFrames(); ++f) {
         const int joint = f-1;
-        float p = std::min(std::max(getJointMin(joint),pose.getArticulation()[joint]),getJointMax(joint));
+        float p = apply_limits ? std::min(std::max(getJointMin(joint),pose.getArticulation()[joint]),getJointMax(joint)) : pose.getArticulation()[joint];
         SE3 T_pf = getTransformJointAxisToParent(joint);
         switch(_jointTypes->hostPtr()[joint]) {
             case RotationalJoint:

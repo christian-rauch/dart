@@ -18,7 +18,7 @@ public:
     ~MirroredModel();
 
     void setArticulation(const float * pose);
-    void setPose(const Pose & pose);
+    void setPose(const Pose & pose, const bool apply_limits = true);
 
     const inline SE3 & getTransformFrameToModel(const int frame) const { return _T_mf->hostPtr()[frame]; }
     const inline SE3 & getTransformModelToFrame(const int frame) const { return _T_fm->hostPtr()[frame]; }

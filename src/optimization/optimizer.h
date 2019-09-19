@@ -57,7 +57,8 @@ public:
                        std::vector<Eigen::MatrixXf *> & dampingMatrices,
                        std::vector<Prior *> & priors,
                        const bool pose_full_update = true,
-                       const bool pose_6d_update = true);
+                       const bool pose_6d_update = true,
+                       const bool apply_limits = true);
 
     const float4 * getDevicePredictedPoints() const { return _predictionRenderer->getDevicePrediction(); }
 

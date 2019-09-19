@@ -31,7 +31,7 @@ public:
 
     virtual void setArticulation(const float * pose) = 0;
 
-    virtual void setPose(const Pose & pose) = 0;
+    virtual void setPose(const Pose & pose, const bool apply_limits) = 0;
 
     static void initializeRenderer(MeshReader * meshReader = 0);
 

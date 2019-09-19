@@ -464,7 +464,7 @@ void HostOnlyModel::setArticulation(const float * pose) {
 
 }
 
-void HostOnlyModel::setPose(const Pose & pose) {
+void HostOnlyModel::setPose(const Pose & pose, const bool apply_limits) {
 
     _T_cm = pose.getTransformModelToCamera();
     _T_mc = pose.getTransformCameraToModel();
@@ -472,7 +472,7 @@ void HostOnlyModel::setPose(const Pose & pose) {
     // compute transforms from frame to model
     for (int f=1; f<getNumFrames(); ++f) {
         const int joint = f-1;
-        const float p = std::min(std::max(getJointMin(joint),pose.getArticulation()[joint]),getJointMax(joint));
+        const float p = apply_limits ? std::min(std::max(getJointMin(joint),pose.getArticulation()[joint]),getJointMax(joint)) : pose.getArticulation()[joint];
 
         SE3 T_pf = getTransformJointAxisToParent(joint);
         switch(_jointTypes[joint]) {

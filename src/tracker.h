@@ -57,9 +57,9 @@ public:
                      const float obsSdfResolution = 0.01,
                      const float3 obsSdfCenter = make_float3(0,0,0));
 
-    inline void updatePose(const int modelNum) {
+    inline void updatePose(const int modelNum, const bool apply_limits = true) {
         _estimatedPoses[modelNum].projectReducedToFull();
-        _mirroredModels[modelNum]->setPose(_estimatedPoses[modelNum]);
+        _mirroredModels[modelNum]->setPose(_estimatedPoses[modelNum], apply_limits);
     }
 
     void stepForward();
@@ -72,7 +72,7 @@ public:
      * @brief This function runs the optimizer to infer the poses of all tracked models in the currently observed frame.
      * @param opts A struct setting up various optimzation parameters.
      */
-    void optimizePoses(const bool pose_full_update = true, const bool pose_6d_update = true);
+    void optimizePoses(const bool pose_full_update = true, const bool pose_6d_update = true, const bool apply_limits = true);
 
     void subtractPlane(const float3 planeNormal,
                        const float planeIntercept,

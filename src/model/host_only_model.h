@@ -84,7 +84,7 @@ public:
 
     // set parameters of DH model
     void setArticulation(const float * pose);
-    void setPose(const Pose & pose);
+    void setPose(const Pose & pose, const bool apply_limits = true);
     void setParam(const int link, const int param, const float value);
     void setGeometryScale(const int geom, const float3 scale);
     void setGeometryTransform(const int geom, const SE3 & T);

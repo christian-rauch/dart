@@ -538,7 +538,8 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
                               std::vector<Eigen::MatrixXf *> & dampingMatrices,
                               std::vector<Prior *> & priors,
                               const bool pose_full_update,
-                              const bool pose_6d_update) {
+                              const bool pose_6d_update,
+                              const bool apply_limits) {
 
     // resize scratch space if there are more models than we've seen before
     const int nModels = models.size();
@@ -600,7 +601,7 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
 
         for (int m=0; m<nModels; ++m) {
             poses[m].projectReducedToFull();
-            models[m]->setPose(poses[m]);
+            models[m]->setPose(poses[m], apply_limits);
             T_mcs.hostPtr()[m] = models[m]->getTransformCameraToModel();
         }
         T_mcs.syncHostToDevice();
@@ -748,15 +749,17 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
 
                 for (int i=0; i<pose.getReducedArticulatedDimensions(); ++i) {
                     if (!pose.isReduced()) {
-                        pose.getReducedArticulation()[i] = std::min(std::max(model.getJointMin(i),pose.getArticulation()[i] + paramUpdate(modelOffsets[m] + i + 6)),model.getJointMax(i));
+                        const float p = pose.getArticulation()[i] + paramUpdate(modelOffsets[m] + i + 6);
+                        pose.getReducedArticulation()[i] = apply_limits ? std::min(std::max(model.getJointMin(i),p),model.getJointMax(i)) : p;
                     } else {
-                        pose.getReducedArticulation()[i] = std::min(std::max(pose.getReducedMin(i),pose.getReducedArticulation()[i] + paramUpdate(modelOffsets[m] + i + 6)),pose.getReducedMax(i));
+                        const float p = pose.getReducedArticulation()[i] + paramUpdate(modelOffsets[m] + i + 6);
+                        pose.getReducedArticulation()[i] = apply_limits ? std::min(std::max(pose.getReducedMin(i),p),pose.getReducedMax(i)) : p;
                     }
                 }
 
                 pose.setTransformCameraToModel(new_T_mc);
                 pose.projectReducedToFull();
-                model.setPose(pose);
+                model.setPose(pose, apply_limits);
             }
 
             for (int p=0; p<priors.size(); ++p) {
