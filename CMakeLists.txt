@@ -294,7 +294,7 @@ install(EXPORT dart
 )
 
 # setup pkg-config files
-SET(PKG_CONFIG_REQUIRES "tinyxml libpng libmatheval eigen3 cuda-8.0")
+SET(PKG_CONFIG_REQUIRES "tinyxml libpng libmatheval eigen3")
 SET(PKG_CONFIG_LIBDIR       "\${prefix}/lib" )
 SET(PKG_CONFIG_INCLUDEDIR   "\${prefix}/include" )
 SET(PKG_CONFIG_LIBS         "-L\${libdir} -l${PROJECT_NAME}" )
