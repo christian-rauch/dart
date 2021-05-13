@@ -685,6 +685,12 @@ void Optimizer::optimizePoses(std::vector<MirroredModel *> & models,
                 }
             }
 
+            if (!std::isfinite((JTJ - JTJ).array().sum())) {
+              std::cerr << "found non-finite values in Jacobian:" << std::endl;
+              std::cerr << "JTJ:" << std::endl << JTJ << std::endl;
+              std::cerr << "eJ:" << std::endl << eJ.transpose() << std::endl;
+            }
+
             // TODO: get rid of redundancy
             // make JTJ symmetric
             for (int i=0; i<reducedDimensions; i++){
